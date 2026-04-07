@@ -32,7 +32,7 @@ async def createFilm(film : Film):
     
 
 
-@app.get("/films"/{id})
+@app.get("/films")
 def get_film():
     with get_connection() as conn:
         cursor = conn.cursor()
