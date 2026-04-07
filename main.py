@@ -49,8 +49,14 @@ async def createGenre(genre : Genre):
         return res
 
 @app.get("/genres")
-def genre(genre : Genre ):
-    return { "ID :": genre.id, " Type :": genre.type}
+def genres(genre : Genre ):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT * FROM Genre""" )
+        res = cursor.fetchall
+        print(res)
+        return res
+                       
 
 
 class Utilisateur(BaseModel):
