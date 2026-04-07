@@ -52,20 +52,7 @@ async def get_films( genreID : int = None, page:int =1, per_page: int=20 ):
         print(res)
         return res
     
-@app.get("/films")
-async def get_film_by_genre(genreID : int = None ):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        query = f"""SELECT *
-                       FROM Film 
-                       WHERE Film.Genre_ID = {genreID}"""
-        if genreID == None:
-            query= f"""SELECT *
-                       FROM Film"""
-        cursor.execute(query)
-        res = cursor.fetchmany()
-        print(res)
-        return res
+
 
 @app.get("/films/{id}")
 async def get_film_by_id(id : int):
@@ -111,12 +98,12 @@ class Utilisateur(BaseModel):
 
 # # générer aléatoirement 
 # async def create_account(utilisateur: Utilisateur):
-#     encoded= jwt.encode({utilisateur.adresse_mail,utilisateur.pseudo, utilisateur.mot_de_passe},Cle_secrete, algorithm="HS256" )
+#     encoded= jwt.encode({utilisateur.adresse_mail, utilisateur.pseudo, utilisateur.mot_de_passe},Cle_secrete, algorithm="HS256" )
 #     with get_connection() as conn:
 #         cursor = conn.cursor()
 #         cursor.execute(f"""
 #     INSERT INTO Utilisateur (adresse_mail,pseudo,mot_de_passe) 
-#         VALUES('{utilisateur.adresse_mail}',{utilisateur.pseudo},{utilisateur.mot_de_passe}) RETURNING *
+#         VALUES('{utilisateur.adresse_mail}',{"utilisateur.pseudo"},{"utilisateur.mot_de_passe"}) RETURNING *
 #             """)
         
 #         res = cursor.fetchone()
