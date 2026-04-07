@@ -31,6 +31,8 @@ async def createFilm(film : Film):
         res = cursor.fetchone()
         print(res)
         return res
+    
+
 
 class Genre(BaseModel):
     id : int | None = None
@@ -47,7 +49,10 @@ async def createGenre(genre : Genre):
         res = cursor.fetchone()
         print(res)
         return res
-    
+
+@app.get("/genre")
+def genre():
+    return {genre.id, genre.type }
 
 class Utilisateur(BaseModel):
     id : int | None = None
