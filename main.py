@@ -49,6 +49,15 @@ async def get_film_by_id(id : int):
         print(res)
         return res
 
+@app.get("/films?genre={genre}")
+async def get_film_by_genre(genre : str):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT * FROM Film WHERE Genre.id = {genre}""" )
+        res = cursor.fetchmany()
+        print(res)
+        return res
+
 
 
 
