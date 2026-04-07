@@ -44,21 +44,10 @@ def get_films():
 async def get_film_by_id(id : int):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film WHERE Film.id = {id}""" )
+        cursor.execute(f"""SELECT * FROM Film  WHERE Film.id = {id}""" )
         res = cursor.fetchone()
         print(res)
         return res
-
-@app.get("/films?genre={genre}")
-async def get_film_by_genre(genre : str):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film WHERE Genre.id = {genre}""" )
-        res = cursor.fetchall()
-        print(res)
-        return res
-
-
 
 
 class Genre(BaseModel):
@@ -86,7 +75,17 @@ def get_genres():
         print(res)
         return res
                        
-
+@app.get("/films?genre={genre}")
+async def get_film_by_genre(genre : str):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT Film.Id,Film.Nom,Film.Note,Film.DateSortie,Film.Image,Film.Video,Film.genreId 
+                       FROM Film JOIN Genre 
+                       ON Film.genreID = Genre.id 
+                       WHERE Genre.Type = {genre}""")
+        res = cursor.fetchall()
+        print(res)
+        return res
 
 class Utilisateur(BaseModel):
     id : int | None = None
