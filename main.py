@@ -32,11 +32,11 @@ async def createFilm(film : Film):
     
 
 
-@app.get("/films")
+@app.get("/films"/{id})
 def films():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film""" )
+        cursor.execute(f"""SELECT * FROM Film WHERE id = id""" )
         res = cursor.fetchall()
         print(res)
         return res
