@@ -32,6 +32,13 @@ async def createFilm(film : Film):
         print(res)
         return res
 
+@app.get("/film")
+def get_film():
+    SELECT* FROM Film
+
+
+
+
 class Genre(BaseModel):
     id : int | None = None
     type : str | None = None 
