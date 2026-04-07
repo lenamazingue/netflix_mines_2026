@@ -18,6 +18,10 @@ class Film(BaseModel):
     video: str | None = None
     genreId: int | None = None
 
+class Genre(BaseModel):
+    id : int | None = None
+    type : str | None = None 
+
 @app.post("/film")
 async def createFilm(film : Film):
     with get_connection() as conn:
@@ -51,10 +55,6 @@ async def get_film_by_id(id : int):
         return res
 
 
-class Genre(BaseModel):
-    id : int | None = None
-    type : str | None = None 
-
 @app.post("/genre")
 async def createGenre(genre : Genre):
     with get_connection() as conn:
@@ -68,7 +68,7 @@ async def createGenre(genre : Genre):
         return res
 
 @app.get("/genres")
-def get_genres():
+async def get_genres():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Genre""" )
@@ -76,14 +76,17 @@ def get_genres():
         print(res)
         return res
                        
-@app.get("/films?genre={genre}")
-async def get_film_by_genre(genre : str):
+@app.get("/films")
+async def get_film_by_genre(genreID : int = None ):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT Film.Id,Film.Nom,Film.Note,Film.DateSortie,Film.Image,Film.Video,Film.genreId 
-                       FROM Film JOIN Genre 
-                       ON Film.genreID = Genre.id 
-                       WHERE Genre.Type = {genre}""")
+        query = f"""SELECT *
+                       FROM Film 
+                       WHERE Film.genreID = {genreID}"""
+        if genreID == None:
+            query= f"""SELECT *
+                       FROM Film"""
+        cursor.execute(query)
         res = cursor.fetchall()
         print(res)
         return res
