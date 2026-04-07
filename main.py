@@ -29,11 +29,19 @@ async def createFilm(film : Film):
         res = cursor.fetchone()
         print(res)
         return res
-    
-
 
 @app.get("/films"/{id})
 def get_film_by_id():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
+        res = cursor.fetchall()
+        print(res)
+        return res
+
+
+@app.get("/films"/{id})
+def get_film():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
