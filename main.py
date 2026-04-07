@@ -30,14 +30,15 @@ async def createFilm(film : Film):
         print(res)
         return res
 
-@app.get("/films"/{id})
-def get_film_by_id():
+@app.get("/films")
+def get_films():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
         res = cursor.fetchall()
         print(res)
-        return res
+        return res, {"page":1 , "per_page":20, "genre_id":}
+    
 
 
 @app.get("/films"/{id})
