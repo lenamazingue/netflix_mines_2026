@@ -37,16 +37,19 @@ def get_films():
         cursor.execute(f"""SELECT * FROM Film limit  1 OFFSET 20""" )
         res = cursor.fetchall()
         print(res)
+<<<<<<< HEAD
         return res
+=======
+>>>>>>> 2a6d4cc42c2f836241eca6c368260905db97a630
     
 
 
-@app.get("/films"/{id})
-def get_film():
+@app.get("/films/{id}")
+async def get_film_by_id(id : int):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
-        res = cursor.fetchall()
+        cursor.execute(f"""SELECT * FROM Film WHERE Film.id = {id}""" )
+        res = cursor.fetchone()
         print(res)
         return res
 
