@@ -87,7 +87,7 @@ async def get_film_by_genre(genreID : int = None ):
             query= f"""SELECT *
                        FROM Film"""
         cursor.execute(query)
-        res = cursor.fetchall()
+        res = cursor.fetchmany()
         print(res)
         return res
 
