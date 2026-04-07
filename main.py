@@ -37,7 +37,6 @@ def get_films():
         cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
         res = cursor.fetchall()
         print(res)
-        return res, {"page":1 , "per_page":20, "genre_id":}
     
 
 
