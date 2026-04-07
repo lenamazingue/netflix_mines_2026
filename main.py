@@ -50,7 +50,7 @@ async def createGenre(genre : Genre):
         print(res)
         return res
 
-@app.get("/genre")
+@app.get("/genres")
 def genre(genre : Genre ):
     return { "ID :", genre.id, ", Type :", genre.type}
 
