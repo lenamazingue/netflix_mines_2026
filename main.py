@@ -34,7 +34,7 @@ async def createFilm(film : Film):
 def get_films(genre_id: int, page:int =1, per_page: int=20 ):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film limit  1 OFFSET 20 ORDER BY Date""" )
+        cursor.execute(f"""SELECT * FROM Film limit {per_page} OFFSET {page} ORDER BY Date""" )
         res = cursor.fetchall()
         print(res)
         return res
