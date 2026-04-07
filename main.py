@@ -18,6 +18,10 @@ class Film(BaseModel):
     video: str | None = None
     genreId: int | None = None
 
+class Genre(BaseModel):
+    id : int | None = None
+    type : str | None = None 
+
 @app.post("/film")
 async def createFilm(film : Film):
     with get_connection() as conn:
@@ -51,10 +55,6 @@ async def get_film_by_id(id : int):
         return res
 
 
-class Genre(BaseModel):
-    id : int | None = None
-    type : str | None = None 
-
 @app.post("/genre")
 async def createGenre(genre : Genre):
     with get_connection() as conn:
@@ -68,7 +68,7 @@ async def createGenre(genre : Genre):
         return res
 
 @app.get("/genres")
-def get_genres():
+async def get_genres():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Genre""" )
@@ -76,15 +76,18 @@ def get_genres():
         print(res)
         return res
                        
-@app.get("/films?genre={genre}")
-async def get_film_by_genre(genre : str):
+@app.get("/films")
+async def get_film_by_genre(genreID : int = None ):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT Film.Id,Film.Nom,Film.Note,Film.DateSortie,Film.Image,Film.Video,Film.genreId 
-                       FROM Film JOIN Genre 
-                       ON Film.genreID = Genre.id 
-                       WHERE Genre.Type = {genre}""")
-        res = cursor.fetchall()
+        query = f"""SELECT *
+                       FROM Film 
+                       WHERE Film.Genre_ID = {genreID}"""
+        if genreID == None:
+            query= f"""SELECT *
+                       FROM Film"""
+        cursor.execute(query)
+        res = cursor.fetchmany()
         print(res)
         return res
 
@@ -95,9 +98,13 @@ class Utilisateur(BaseModel):
     mot_de_passe : str | None = None 
 
 @app.post("/register")
+<<<<<<< HEAD
 Cle_secrete = "4e1ac1e3df1ad5186b1bb9089b9e64e219d7aa1339525b6869b53a483ba3d849619aa9b9812b37a3838f8133503b3108f140a16476b7e6009c4445c6c1bdf1bd5f6bea3c6972a8f0d12ca0257d553db5"
 
 # générer aléatoirement 
+=======
+
+>>>>>>> 8e4158ce99decd1e3bdf4cf41436f4c9ba4d03c2
 async def create_account(utilisateur: Utilisateur):
     encoded= jwt.encode({utilisateur.adresse_mail,utilisateur.pseudo, utilisateur.mot_de_passe},Cle_secrete, algorithm="HS256" )
     with get_connection() as conn:
