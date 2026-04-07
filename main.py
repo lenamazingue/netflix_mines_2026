@@ -4,8 +4,6 @@ from db import get_connection
 
 app = FastAPI()
 
-a = 5
-
 
 @app.get("/ping")
 def ping():
@@ -31,6 +29,8 @@ async def createFilm(film : Film):
         res = cursor.fetchone()
         print(res)
         return res
+    
+
 
 @app.get("/film")
 def get_film():
@@ -54,7 +54,17 @@ async def createGenre(genre : Genre):
         res = cursor.fetchone()
         print(res)
         return res
-    
+
+@app.get("/genres")
+def genres():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT * FROM Genre""" )
+        res = cursor.fetchall()
+        print(res)
+        return res
+                       
+
 
 class Utilisateur(BaseModel):
     id : int | None = None
