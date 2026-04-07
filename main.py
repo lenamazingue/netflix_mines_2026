@@ -93,7 +93,7 @@ class Utilisateur(BaseModel):
     adresse_mail : str | None = None 
     pseudo : str | None = None 
     mot_de_passe : str | None = None 
-@app.post("/auth/register")
+@app.post("/register")
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
