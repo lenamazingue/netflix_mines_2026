@@ -35,15 +35,37 @@ async def createFilm(film : Film):
         return res
 
 @app.get("/films")
-async def get_films( page:int =1, per_page: int=20 ):
+async def get_films( genreID : int = None, page:int =1, per_page: int=20 ):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film  ORDER BY DateSortie limit {per_page} OFFSET {per_page}*{page - 1} """ )
+        if genreID is not None:
+            query = f"""SELECT *
+                       FROM Film WHERE Film.Genre_ID = {genreID} ORDER BY DateSortie limit {per_page} OFFSET {per_page}*{page - 1} """
+        else:
+            query = f"""
+                SELECT *
+                FROM Film ORDER BY DateSortie LIMIT {per_page} OFFSET {offset}"""
+            
+
+        cursor.execute(query)
         res = cursor.fetchall()
         print(res)
         return res
     
-
+@app.get("/films")
+async def get_film_by_genre(genreID : int = None ):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        query = f"""SELECT *
+                       FROM Film 
+                       WHERE Film.Genre_ID = {genreID}"""
+        if genreID == None:
+            query= f"""SELECT *
+                       FROM Film"""
+        cursor.execute(query)
+        res = cursor.fetchmany()
+        print(res)
+        return res
 
 @app.get("/films/{id}")
 async def get_film_by_id(id : int):
@@ -76,20 +98,7 @@ async def get_genres():
         print(res)
         return res
                        
-@app.get("/films")
-async def get_film_by_genre(genreID : int = None ):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        query = f"""SELECT *
-                       FROM Film 
-                       WHERE Film.Genre_ID = {genreID}"""
-        if genreID == None:
-            query= f"""SELECT *
-                       FROM Film"""
-        cursor.execute(query)
-        res = cursor.fetchmany()
-        print(res)
-        return res
+
 
 class Utilisateur(BaseModel):
     id : int | None = None
