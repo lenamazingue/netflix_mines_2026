@@ -33,13 +33,14 @@ async def createFilm(film : Film):
 
 
 @app.get("/films")
-def films():
+def get_films():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film""" )
         res = cursor.fetchall()
         print(res)
-        return res
+        return res, {"page":1 , "per_page":20, "genre_id":}
+    
 
 
 
@@ -61,7 +62,7 @@ async def createGenre(genre : Genre):
         return res
 
 @app.get("/genres")
-def genres():
+def get_genres():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Genre""" )
