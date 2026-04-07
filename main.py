@@ -4,7 +4,6 @@ from db import get_connection
 
 app = FastAPI()
 
-
 @app.get("/ping")
 def ping():
     return {"message": "pong"}
