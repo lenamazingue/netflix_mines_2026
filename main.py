@@ -49,9 +49,10 @@ async def get_films( genre : int = None, page:int =1, per_page: int=20 ):
             
 
         cursor.execute(query)
+        total = cursor.execute("SELECT COUNT(*) ...").fetchone()[0]
         res = cursor.fetchall()
         print(res)
-        return {"data":res, "per_page":per_page, "page":page}
+        return {"data":res, "per_page":per_page, "page":page, "total":total}
     
 
 
