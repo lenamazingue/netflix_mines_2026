@@ -32,8 +32,8 @@ async def createFilm(film : Film):
     
 
 
-@app.get("/films")
-def get_film():
+@app.get("/films"/{id})
+def get_film_by_id():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
