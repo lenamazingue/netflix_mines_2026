@@ -41,8 +41,8 @@ def get_films():
     
 
 
-@app.get("/films"/{id})
-def get_film_by_id():
+@app.get("/films/{id}")
+async def get_film_by_id(id : int):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
