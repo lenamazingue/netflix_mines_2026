@@ -44,7 +44,7 @@ async def get_films( genreID : int = None, page:int =1, per_page: int=20 ):
         else:
             query = f"""
                 SELECT *
-                FROM Film ORDER BY DateSortie LIMIT {per_page} OFFSET {offset}"""
+                FROM Film ORDER BY DateSortie limit {per_page} OFFSET {per_page}*{page - 1}"""
             
 
         cursor.execute(query)
