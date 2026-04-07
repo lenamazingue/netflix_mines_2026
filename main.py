@@ -44,8 +44,8 @@ def get_films():
 async def get_film_by_id(id : int):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
-        res = cursor.fetchall()
+        cursor.execute(f"""SELECT * FROM Film WHERE Film.id = {id}""" )
+        res = cursor.fetchone()
         print(res)
         return res
 
