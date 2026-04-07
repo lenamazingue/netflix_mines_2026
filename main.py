@@ -31,10 +31,10 @@ async def createFilm(film : Film):
         return res
 
 @app.get("/films")
-def get_films(genre_id: int, page:int =1, per_page: int=20 ):
+async def get_films(genre_id: int, page:int =1, per_page: int=20 ):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film limit {per_page} OFFSET {page} ORDER BY Date""" )
+        cursor.execute(f"""SELECT * FROM Film limit {per_page} OFFSET {per_page}*{page} ORDER BY Date""" )
         res = cursor.fetchall()
         print(res)
         return res
@@ -94,6 +94,17 @@ class Utilisateur(BaseModel):
     adresse_mail : str | None = None 
     pseudo : str | None = None 
     mot_de_passe : str | None = None 
+@app.post("/auth/register")
+async def create_account(utilisateur: Utilisateur):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""
+    INSERT INTO Utilisateur (adresse_mail,pseudo,mot_de_passe) 
+        VALUES('{utilisateur.adresse_mail}',{utilisateur.pseudo},{utilisateur.mot_de_passe}) RETURNING *
+            """)
+        res = cursor.fetchone()
+        print(res)
+        return res
 
 class Genre_Utilisateur(BaseModel):
     id : int | None = None
