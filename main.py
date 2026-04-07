@@ -4,8 +4,6 @@ from db import get_connection
 
 app = FastAPI()
 
-a = 5
-
 
 @app.get("/ping")
 def ping():
@@ -52,7 +50,7 @@ async def createGenre(genre : Genre):
 
 @app.get("/genres")
 def genre(genre : Genre ):
-    return { "ID :", genre.id, ", Type :", genre.type}
+    return { "ID :": genre.id, " Type :": genre.type}
 
 
 class Utilisateur(BaseModel):
