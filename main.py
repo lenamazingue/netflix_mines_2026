@@ -34,14 +34,14 @@ async def createFilm(film : Film):
         print(res)
         return res
 
-@app.get("/films")
-async def get_films(genre_id: int, page:int =1, per_page: int=20 ):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film limit {per_page} OFFSET {per_page}*{page} ORDER BY Date""" )
-        res = cursor.fetchall()
-        print(res)
-        return res
+#@app.get("/films")
+#async def get_films(genre_id: int, page:int =1, per_page: int=20 ):
+#    with get_connection() as conn:
+#        cursor = conn.cursor()
+#        cursor.execute(f"""SELECT * FROM Film limit {per_page} OFFSET {per_page}*{page} ORDER BY Date""" )
+#        res = cursor.fetchall()
+#        print(res)
+#        return res
     
 
 
@@ -82,7 +82,7 @@ async def get_film_by_genre(genreID : int = None ):
         cursor = conn.cursor()
         query = f"""SELECT *
                        FROM Film 
-                       WHERE Film.genreID = {genreID}"""
+                       WHERE Film.Genre_ID = {genreID}"""
         if genreID == None:
             query= f"""SELECT *
                        FROM Film"""
@@ -116,4 +116,4 @@ class Genre_Utilisateur(BaseModel):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
