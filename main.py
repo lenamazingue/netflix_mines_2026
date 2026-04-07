@@ -49,11 +49,11 @@ async def createGenre(genre : Genre):
         return res
 
 @app.get("/genres")
-def genres(genre : Genre ):
+def genres():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Genre""" )
-        res = cursor.fetchall
+        res = cursor.fetchall()
         print(res)
         return res
                        
