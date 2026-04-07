@@ -51,8 +51,9 @@ async def createGenre(genre : Genre):
         return res
 
 @app.get("/genre")
-def genre():
-    return {genre.id, genre.type }
+def genre(genre : Genre ):
+    return { "ID :", genre.id, ", Type :", genre.type}
+
 
 class Utilisateur(BaseModel):
     id : int | None = None
