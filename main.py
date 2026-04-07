@@ -32,6 +32,33 @@ async def createFilm(film : Film):
         print(res)
         return res
 
+class Genre(BaseModel):
+    id : int | None = None
+    type : str | None = None 
+
+@app.post("/genre")
+async def createGenre(genre : Genre):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""
+    INSERT INTO Genre (Type) 
+        VALUES ('{genre.type}') RETURNING*
+""")
+        res = cursor.fetchone()
+        print(res)
+        return res
+    
+
+class Utilisateur(BaseModel):
+    id : int | None = None
+    adresse_mail : str | None = None 
+    pseudo : str | None = None 
+    mot_de_passe : str | None = None 
+
+class Genre_Utilisateur(BaseModel):
+    id : int | None = None
+    id_genre : int | None = None 
+    id_user : int | None = None 
 
 if __name__ == "__main__":
     import uvicorn
