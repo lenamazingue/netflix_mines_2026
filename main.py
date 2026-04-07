@@ -36,7 +36,7 @@ async def createFilm(film : Film):
 def get_films():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Film""" )
+        cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
         res = cursor.fetchall()
         print(res)
         return res, {"page":1 , "per_page":20, "genre_id":}
