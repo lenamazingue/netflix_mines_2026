@@ -54,7 +54,7 @@ async def get_film_by_genre(genre : str):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film WHERE Genre.id = {genre}""" )
-        res = cursor.fetchmany()
+        res = cursor.fetchall()
         print(res)
         return res
 
