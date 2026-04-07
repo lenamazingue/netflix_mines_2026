@@ -42,7 +42,7 @@ def get_films():
 
 
 @app.get("/films"/{id})
-def get_film():
+def get_film_by_id():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film WHERE Film.id = id""" )
