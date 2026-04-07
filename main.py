@@ -38,13 +38,14 @@ async def createFilm(film : Film):
 async def get_films( genreID : int = None, page:int =1, per_page: int=20 ):
     with get_connection() as conn:
         cursor = conn.cursor()
+        offset=per_page*(page-1)
         if genreID is not None:
             query = f"""SELECT *
-                       FROM Film WHERE Film.Genre_ID = {genreID} ORDER BY DateSortie limit {per_page} OFFSET {per_page}*{page - 1} """
+                       FROM Film WHERE Film.Genre_ID = {genreID} ORDER BY DateSortie limit {per_page} OFFSET {offset} """
         else:
             query = f"""
                 SELECT *
-                FROM Film ORDER BY DateSortie limit {per_page} OFFSET {per_page}*{page - 1}"""
+                FROM Film ORDER BY DateSortie limit {per_page} OFFSET {offset}"""
             
 
         cursor.execute(query)
