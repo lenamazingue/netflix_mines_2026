@@ -27,8 +27,8 @@ async def createFilm(film : Film):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""
-            INSERT INTO Film (Nom,Note,DateSortie,Image,Video, Genre_id)  
-            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}',{film.genreId}) RETURNING *
+            INSERT INTO Film (Nom,Note,DateSortie,Image,Video)  
+            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}') RETURNING *
             """)
         res = cursor.fetchone()
         print(res)
@@ -49,12 +49,11 @@ async def get_films( genre : int = None, page:int =1, per_page: int=20 ):
             
 
         cursor.execute(query)
+        total = cursor.execute("SELECT COUNT(*) ...").fetchone()[0]
         res = cursor.fetchall()
-        total = cursor.execute("SELECT COUNT(*) FROM Film").fetchone()[0]
-        
         print(res)
-        return {"data":res, "per_page":per_page, "page":page, "total":total }
-
+        return {"data":res, "per_page":per_page, "page":page }
+    
 
 
 @app.get("/films/{id}")
@@ -87,7 +86,7 @@ async def get_genres():
         res = cursor.fetchall()
         print(res)
         return res
-
+                       
 
 
 class Utilisateur(BaseModel):
@@ -108,7 +107,7 @@ class Utilisateur(BaseModel):
 #     INSERT INTO Utilisateur (adresse_mail,pseudo,mot_de_passe) 
 #         VALUES('{utilisateur.adresse_mail}',{"utilisateur.pseudo"},{"utilisateur.mot_de_passe"}) RETURNING *
 #             """)
-
+        
 #         res = cursor.fetchone()
 #         print(res)
 #         return res
