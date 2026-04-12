@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from db import get_connection
-import jwt
+
 app = FastAPI()
 
 
@@ -27,40 +27,21 @@ async def createFilm(film : Film):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""
-            INSERT INTO Film (Nom,Note,DateSortie,Image,Video, Genre_ID)  
-            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}',{film.genreId}) RETURNING *
+            INSERT INTO Film (Nom,Note,DateSortie,Image,Video)  
+            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}') RETURNING *
             """)
         res = cursor.fetchone()
         print(res)
         return res
 
-@app.get("/films")
-async def get_films( genre : int = None, page:int =1, per_page: int=20 ):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        offset=per_page*(page-1)
-        
-        
-        if genre is not None:
-            cursor.execute(f"SELECT COUNT(*) FROM Film  WHERE Film.Genre_ID = {genre}")
-            total = cursor.fetchone()[0]
-            query = f"""SELECT *
-                       FROM Film WHERE Film.Genre_ID = {genre} ORDER BY DateSortie Desc limit {per_page} OFFSET {offset} """
-        else:
-            cursor.execute(f"SELECT COUNT(*) FROM Film")
-            total = cursor.fetchone()[0]
-            query = f"""
-                SELECT *
-                FROM Film ORDER BY DateSortie Desc limit {per_page} OFFSET {offset}"""
-            
-
-
-        cursor.execute(query)
-        res = cursor.fetchall()
-
-        
-        print(res)
-        return {"data":res, "per_page":per_page, "page":page, "total":total }
+#@app.get("/films")
+#async def get_films(genre_id: int, page:int =1, per_page: int=20 ):
+#    with get_connection() as conn:
+#        cursor = conn.cursor()
+#        cursor.execute(f"""SELECT * FROM Film limit {per_page} OFFSET {per_page}*{page} ORDER BY Date""" )
+#        res = cursor.fetchall()
+#        print(res)
+#        return res
 
 
 
@@ -90,35 +71,43 @@ async def createGenre(genre : Genre):
 async def get_genres():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM Genre ORDER BY Type ASC " )
+        cursor.execute(f"""SELECT * FROM Genre""" )
         res = cursor.fetchall()
         print(res)
         return res
 
-
+@app.get("/films")
+async def get_film_by_genre(genreID : int = None ):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        query = f"""SELECT *
+                       FROM Film 
+                       WHERE Film.Genre_ID = {genreID}"""
+        if genreID == None:
+            query= f"""SELECT *
+                       FROM Film"""
+        cursor.execute(query)
+        res = cursor.fetchmany()
+        print(res)
+        return res
 
 class Utilisateur(BaseModel):
     id : int | None = None
     adresse_mail : str | None = None 
     pseudo : str | None = None 
     mot_de_passe : str | None = None 
+@app.post("/register")
 
-# @app.post("/register")
-# Cle_secrete = "4e1ac1e3df1ad5186b1bb9089b9e64e219d7aa1339525b6869b53a483ba3d849619aa9b9812b37a3838f8133503b3108f140a16476b7e6009c4445c6c1bdf1bd5f6bea3c6972a8f0d12ca0257d553db5"
-
-# # générer aléatoirement 
-# async def create_account(utilisateur: Utilisateur):
-#     encoded= jwt.encode({utilisateur.adresse_mail, utilisateur.pseudo, utilisateur.mot_de_passe},Cle_secrete, algorithm="HS256" )
-#     with get_connection() as conn:
-#         cursor = conn.cursor()
-#         cursor.execute(f"""
-#     INSERT INTO Utilisateur (adresse_mail,pseudo,mot_de_passe) 
-#         VALUES('{utilisateur.adresse_mail}',{"utilisateur.pseudo"},{"utilisateur.mot_de_passe"}) RETURNING *
-#             """)
-
-#         res = cursor.fetchone()
-#         print(res)
-#         return res
+async def create_account(utilisateur: Utilisateur):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""
+    INSERT INTO Utilisateur (adresse_mail,pseudo,mot_de_passe) 
+        VALUES('{utilisateur.adresse_mail}',{utilisateur.pseudo},{utilisateur.mot_de_passe}) RETURNING *
+            """)
+        res = cursor.fetchone()
+        print(res)
+        return res
 
 class Genre_Utilisateur(BaseModel):
     id : int | None = None
