@@ -28,7 +28,7 @@ async def createFilm(film : Film):
         cursor = conn.cursor()
         cursor.execute(f"""
             INSERT INTO Film (Nom,Note,DateSortie,Image,Video, Genre_id)  
-            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}',{film.genreId}) RETURNING *
+            VALUES('{film.nom}','{film.note}','{film.dateSortie}','{film.image}','{film.video}',{film.genreId}) RETURNING *
             """)
         res = cursor.fetchone()
         print(res)
@@ -48,9 +48,12 @@ async def get_films( genre : int = None, page:int =1, per_page: int=20 ):
                 FROM Film ORDER BY DateSortie Desc limit {per_page} OFFSET {offset}"""
             
 
+        cursor.execute("SELECT COUNT(*) FROM Film")
+        total = cursor.fetchone()[0]
+
         cursor.execute(query)
         res = cursor.fetchall()
-        total = cursor.execute("SELECT COUNT(*) FROM Film").fetchone()[0]
+
         
         print(res)
         return {"data":res, "per_page":per_page, "page":page, "total":total }
