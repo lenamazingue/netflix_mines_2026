@@ -34,14 +34,25 @@ async def createFilm(film : Film):
         print(res)
         return res
 
-#@app.get("/films")
-#async def get_films(genre_id: int, page:int =1, per_page: int=20 ):
-#    with get_connection() as conn:
-#        cursor = conn.cursor()
-#        cursor.execute(f"""SELECT * FROM Film limit {per_page} OFFSET {per_page}*{page} ORDER BY Date""" )
-#        res = cursor.fetchall()
-#        print(res)
-#        return res
+@app.get("/films")
+async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        offset = per_page * (page - 1)
+        if genreID is not None:
+            cursor.execute(f"SELECT COUNT(*) FROM Film WHERE Genre_ID = {genreID}")
+        else:
+            cursor.execute("SELECT COUNT(*) FROM Film")
+        total = cursor.fetchone()[0]
+        if genreID is not None:
+            query=(f"""SELECT * FROM Film limit {per_page} OFFSET {per_page}*{page} ORDER BY Date""" )
+        else:
+            query = f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}"""
+
+        cursor.execute(query)
+        res = cursor.fetchall()
+        print(res)
+        return {"data":res,"page": page,"per_page": per_page,"total": total}
 
 
 
