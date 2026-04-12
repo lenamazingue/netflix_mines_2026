@@ -27,8 +27,8 @@ async def createFilm(film : Film):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""
-            INSERT INTO Film (Nom,Note,DateSortie,Image,Video, Genre_id)  
-            VALUES('{film.nom}','{film.note}','{film.dateSortie}','{film.image}','{film.video}',{film.genreId}) RETURNING *
+            INSERT INTO Film (Nom,Note,DateSortie,Image,Video, Genre_Id)  
+            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}',{film.genreId}) RETURNING *
             """)
         res = cursor.fetchone()
         print(res)
@@ -90,7 +90,7 @@ async def createGenre(genre : Genre):
 async def get_genres():
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM Genre " )
+        cursor.execute(f"SELECT * FROM Genre ORDER BY Type ASC " )
         res = cursor.fetchall()
         print(res)
         return res
