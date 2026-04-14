@@ -108,15 +108,13 @@ class Utilisateur(BaseModel):
     pseudo : str | None = None 
     mot_de_passe : str | None = None 
 
-@app.post("/register", json = {"email": "user@example.com",
-  "pseudo": "johndoe",
-  "password": "s3cret"})
+@app.post("/register")
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""
-    INSERT INTO Utilisateur (adresse_mail,pseudo,mot_de_passe) 
-        VALUES('{utilisateur.adresse_mail}',{utilisateur.pseudo},{utilisateur.mot_de_passe}) RETURNING *
+    INSERT INTO Utilisateur (email,pseudo,password) 
+        VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
             """)
         res = cursor.fetchone()
         print(res)
