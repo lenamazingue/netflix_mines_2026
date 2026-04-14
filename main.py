@@ -107,8 +107,10 @@ class Utilisateur(BaseModel):
     adresse_mail : str | None = None 
     pseudo : str | None = None 
     mot_de_passe : str | None = None 
-@app.post("/register")
 
+@app.post("/register", json = {"email": "user@example.com",
+  "pseudo": "johndoe",
+  "password": "s3cret"})
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
