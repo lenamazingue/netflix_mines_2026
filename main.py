@@ -126,7 +126,7 @@ async def create_account(utilisateur: Utilisateur):
             """)
         res = cursor.fetchone()
         pseudo= res[2]
-        token = jwt.encode(pseudo,Mot_secret,Algorithm)
+        token = jwt.encode({"ps":pseudo}, Mot_secret, algorithm = Algorithm)
         
         return token
 
