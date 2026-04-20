@@ -119,7 +119,8 @@ async def create_account(utilisateur: Utilisateur):
             raise HTTPException(status_code=422)
         cursor.execute(f"""SELECT * FROM Utilisateur WHERE AdresseMail = '{utilisateur.adresse_mail}'""")
         test_existence_mail = cursor.fetchone()
-        if test_existence_mail is None:
+
+        if test_existence_mail is not None:
             raise HTTPException(status_code=409) #comme demandé dans le test duplicate
         #Sinon on continue
         cursor.execute(f"""
