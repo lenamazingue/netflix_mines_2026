@@ -104,9 +104,9 @@ async def get_film_by_genre(genreID : int = None ):
 
 class Utilisateur(BaseModel):
     id : int | None = None
-    adresse_mail : str 
+    email : str 
     pseudo : str 
-    mot_de_passe : str 
+    password : str 
 
 Mot_secret = "2f6c99a0445caff2b6a56bb3224c0359"
 Algorithm = "HS256"
@@ -115,7 +115,7 @@ Algorithm = "HS256"
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""SELECT * FROM Utilisateur WHERE AdresseMail = '{utilisateur.adresse_mail}'""")
+        cursor.execute(f"""SELECT * FROM Utilisateur WHERE AdresseMail = '{utilisateur.email}'""")
         test_existence_mail = cursor.fetchone()
 
         if test_existence_mail is not None:
@@ -123,7 +123,7 @@ async def create_account(utilisateur: Utilisateur):
         #Sinon on continue
         cursor.execute(f"""
     INSERT INTO Utilisateur (AdresseMail,Pseudo,MotDePasse) 
-        VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
+        VALUES('{utilisateur.email}','{utilisateur.pseudo}','{utilisateur.password}') RETURNING *
             """)
         res = cursor.fetchone()
         adresse_mail= res[0]
