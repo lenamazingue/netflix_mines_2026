@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from db import get_connection
 
@@ -112,6 +112,11 @@ class Utilisateur(BaseModel):
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM Utilisateur WHERE email = '{utilisateur.adresse_mail}'""")
+        test_existence_mail = cursor.fetchone()
+        if test_existence_mail:
+            raise HTTPException(status_code=409) #comme demandé dans le test duplicate
+        #Sinon on continue
         cursor.execute(f"""
     INSERT INTO Utilisateur (email,pseudo,password) 
         VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
