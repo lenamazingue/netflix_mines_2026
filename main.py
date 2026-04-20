@@ -110,20 +110,26 @@ class Utilisateur(BaseModel):
 
 @app.post("/auth/register")
 async def create_account(utilisateur: Utilisateur):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM Utilisateur WHERE email = {utilisateur.adresse_mail}""")
-        test_existence_mail = cursor.fetchone()
-        if test_existence_mail:
-            raise HTTPException(status_code=409) #comme demandé dans le test duplicate
-        #Sinon on continue
-        cursor.execute(f"""
-    INSERT INTO Utilisateur (email,pseudo,password) 
-        VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
-            """)
-        res = cursor.fetchone()
-        print(res)
-        return res
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM Utilisateur WHERE email = {utilisateur.adresse_mail}""")
+            test_existence_mail = cursor.fetchone()
+            if test_existence_mail:
+                raise HTTPException(status_code=409) #comme demandé dans le test duplicate
+            #Sinon on continue
+            cursor.execute(f"""
+        INSERT INTO Utilisateur (email,pseudo,password) 
+            VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
+                """)
+            res = cursor.fetchone()
+            print(res)
+            return res
+    except Exception as e:
+        return {
+            "error": str(e)
+        }
+        
 
 class Genre_Utilisateur(BaseModel):
     id : int | None = None
