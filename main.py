@@ -115,9 +115,11 @@ Algorithm = "HS256"
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
+        if not utilisateur.adresse_mail:
+            raise HTTPException(status_code=422)
         cursor.execute(f"""SELECT * FROM Utilisateur WHERE AdresseMail = '{utilisateur.adresse_mail}'""")
         test_existence_mail = cursor.fetchone()
-        if test_existence_mail:
+        if test_existence_mail is None:
             raise HTTPException(status_code=409) #comme demandé dans le test duplicate
         #Sinon on continue
         cursor.execute(f"""
