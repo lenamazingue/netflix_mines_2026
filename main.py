@@ -125,8 +125,8 @@ async def create_account(utilisateur: Utilisateur):
         VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
             """)
         res = cursor.fetchone()
-        adresse_mail= res[0]
-        token = jwt.encode({"sub":adresse_mail}, Mot_secret, algorithm = Algorithm) #carte identité de l'utilisateur. 
+        id= res[1]
+        token = jwt.encode({"sub":id}, Mot_secret, algorithm = Algorithm) #carte identité de l'utilisateur. 
         
         return {"access_token":token, "token_type": "bearer"}
 
