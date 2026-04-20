@@ -126,9 +126,9 @@ async def create_account(utilisateur: Utilisateur):
             """)
         res = cursor.fetchone()
         adresse_mail= res[0]
-        token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm) #carte identité de l'utilisateur. 
+        token = jwt.encode({"sub":adresse_mail}, Mot_secret, algorithm = Algorithm) #carte identité de l'utilisateur. 
         
-        return res
+        return {"access_token":token, "token_type": "bearer"}
 
 class Genre_Utilisateur(BaseModel):
     id : int | None = None
