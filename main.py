@@ -125,10 +125,10 @@ async def create_account(utilisateur: Utilisateur):
         VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
             """)
         res = cursor.fetchone()
-        pseudo= res[2]
-        token = jwt.encode({"ps":pseudo}, Mot_secret, algorithm = Algorithm)
+        adresse_mail= res[0]
+        token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm)
         
-        return token
+        return {"access_token":token, "token_type": "bearer"}
 
 class Genre_Utilisateur(BaseModel):
     id : int | None = None
