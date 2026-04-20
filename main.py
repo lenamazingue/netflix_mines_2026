@@ -108,7 +108,7 @@ class Utilisateur(BaseModel):
     pseudo : str | None = None 
     mot_de_passe : str | None = None 
 
-@app.post("/register")
+@app.post("/auth/register")
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
