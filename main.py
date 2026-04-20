@@ -112,7 +112,7 @@ class Utilisateur(BaseModel):
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM Utilisateur WHERE email = '{utilisateur.adresse_mail}'""")
+        cursor.execute(f"SELECT * FROM Utilisateur WHERE email = {utilisateur.adresse_mail}""")
         test_existence_mail = cursor.fetchone()
         if test_existence_mail:
             raise HTTPException(status_code=409) #comme demandé dans le test duplicate
