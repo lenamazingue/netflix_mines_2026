@@ -108,9 +108,6 @@ class Utilisateur(BaseModel):
     pseudo : str | None = None 
     mot_de_passe : str | None = None 
 
-Mot_secret = "2f6c99a0445caff2b6a56bb3224c0359"
-Algorithm = "HS256"
-
 @app.post("/auth/register")
 async def create_account(utilisateur: Utilisateur):
     with get_connection() as conn:
@@ -125,10 +122,6 @@ async def create_account(utilisateur: Utilisateur):
         VALUES('{utilisateur.adresse_mail}','{utilisateur.pseudo}','{utilisateur.mot_de_passe}') RETURNING *
             """)
         res = cursor.fetchone()
-        #adresse_mail= res[0]
-        #token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm) #carte identité de l'utilisateur.
-        
-        #return {"access_token":token, "token_type": "bearer"}
         print(res)
         return res
 
