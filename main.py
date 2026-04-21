@@ -45,7 +45,7 @@ async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
             cursor.execute("SELECT COUNT(*) FROM Film")
         total = cursor.fetchone()[0]
         if genreID is not None:
-            query=(f"""SELECT * FROM Film limit {per_page} OFFSET {per_page}*{page} ORDER BY Date""" )
+            query=(f"""SELECT * FROM Film limit {per_page} OFFSET {offset} ORDER BY Date""" )
         else:
             query = f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}"""
 
@@ -131,6 +131,22 @@ async def create_account(utilisateur: Utilisateur):
         
         return {"access_token": token,
   "token_type": "bearer"}
+
+
+@app.post("/auth/post")
+async def connexion(utilisateur: Utilisateur):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f""" INSERT INTO Utilisateur (AdresseMail, MotDePasse)
+                       VALUES ('{utilisateur.email}','{utilisateur.password}') RETURNING *""") 
+        res = cursor.fetchone()
+        adresse_mail= res[0]
+        token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm)
+        return {"access_token": token,
+  "token_type": "bearer"}
+
+
+
 
 class Genre_Utilisateur(BaseModel):
     id : int | None = None
