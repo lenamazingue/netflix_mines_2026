@@ -161,7 +161,7 @@ async def create_preferences(genreutilisateur:Genre_Utilisateur,authorization: A
     token = authorization.replace("Bearer ", "")
     try:
         payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
-        user_id = payload.get("user_id")
+        user_id = payload.get("ad")
     except:
         raise HTTPException(status_code=401, detail="Token invalide")
 
