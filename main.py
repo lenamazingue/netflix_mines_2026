@@ -87,20 +87,20 @@ async def get_genres():
         print(res)
         return res
 
-@app.get("/films")
-async def get_film_by_genre(genreID : int = None ):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        query = f"""SELECT *
-                       FROM Film 
-                       WHERE Film.Genre_ID = {genreID}"""
-        if genreID == None:
-            query= f"""SELECT *
-                       FROM Film"""
-        cursor.execute(query)
-        res = cursor.fetchmany()
-        print(res)
-        return res
+#@app.get("/films")
+#async def get_film_by_genre(genreID : int = None ):
+#    with get_connection() as conn:
+#        cursor = conn.cursor()
+#        query = f"""SELECT *
+#                       FROM Film 
+#                       WHERE Film.Genre_ID = {genreID}"""
+#        if genreID == None:
+#            query= f"""SELECT *
+#                       FROM Film"""
+#        cursor.execute(query)
+#        res = cursor.fetchmany()
+#        print(res)
+#        return res
 
 class Utilisateur(BaseModel):
     id : int | None = None
