@@ -16,7 +16,7 @@ class Film(BaseModel):
     dateSortie: int
     image: str | None = None
     video: str | None = None
-    genreId: int | None = None
+    genre_Id: int | None = None
 
 class Genre(BaseModel):
     id : int | None = None
@@ -35,24 +35,24 @@ async def createFilm(film : Film):
         return res
 
 @app.get("/films")
-async def get_films(genreID = None, page: int = 1, per_page: int = 20):
+async def get_films(genre_ID = None, page: int = 1, per_page: int = 20):
     per_page=int(per_page)
     page=int(page)
     with get_connection() as conn:
         cursor = conn.cursor()
-        if genreID == None:
+        if genre_ID == None:
             cursor.execute(f"SELECT * FROM Film")
         else:
-            cursor.execute(f"SELECT * FROM Film WHERE Genre_ID = {genreID}")
+            cursor.execute(f"SELECT * FROM Film WHERE Genre_ID = {genre_ID}")
         ALL = cursor.fetchall()
         total = len(ALL)
 
         cursor = conn.cursor()
         offset = per_page * (page - 1)
-        if genreID == None : 
+        if genre_ID == None : 
             cursor.execute(f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}""")
         else : 
-            cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
+            cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genre_ID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
         data = cursor.fetchall()
         res = {"data":data,"page": page,"per_page": per_page,"total": total}
         return res
@@ -90,20 +90,7 @@ async def get_genres():
         print(res)
         return res
 
-#@app.get("/films")
-#async def get_film_by_genre(genreID : int = None ):
-#    with get_connection() as conn:
-#        cursor = conn.cursor()
-#        query = f"""SELECT *
-#                       FROM Film 
-#                       WHERE Film.Genre_ID = {genreID}"""
-#        if genreID == None:
-#            query= f"""SELECT *
-#                       FROM Film"""
-#        cursor.execute(query)
-#        res = cursor.fetchmany()
-#        print(res)
-#        return res
+
 
 class Utilisateur(BaseModel):
     id : int | None = None
@@ -155,13 +142,7 @@ async def connexion(utilisateur: Utilisateur):
 
 
 
-
-class Genre_Utilisateur(BaseModel):
-    id : int | None = None
-    id_genre : int | None = None 
-    id_user : int | None = None 
-
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
