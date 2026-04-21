@@ -133,12 +133,11 @@ async def create_account(utilisateur: Utilisateur):
   "token_type": "bearer"}
 
 
-@app.post("/auth/post")
+@app.post("/auth/login")
 async def connexion(utilisateur: Utilisateur):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f""" INSERT INTO Utilisateur (AdresseMail, MotDePasse)
-                       VALUES ('{utilisateur.email}','{utilisateur.password}') RETURNING *""") 
+        cursor.execute(f"""  SELECT* FROM Utilisateur WHERE AdreseMail='{utilisateur.email}'AND MotDePasse= '{utilisateur.password}') """) 
         res = cursor.fetchone()
         adresse_mail= res[0]
         token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm)
