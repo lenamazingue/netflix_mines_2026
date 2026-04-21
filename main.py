@@ -48,11 +48,10 @@ async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
         #total = cursor.fetchone()[0]
 
         if genreID == None : 
-            query = f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}"""
+            cursor.execute(f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}""")
         else : 
-            query=f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """
+            cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
         
-        cursor.execute(query)
         res = cursor.fetchall()
         total = len(res)
         print(res)
