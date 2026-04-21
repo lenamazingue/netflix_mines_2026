@@ -141,11 +141,11 @@ async def connexion(utilisateur: Utilisateur):
         #on va tester si l'adresse mail existe bien dans la base
 
         cursor.execute(f"""  SELECT* FROM Utilisateur WHERE AdresseMail='{utilisateur.email}' AND MotDePasse= '{utilisateur.password}' """) 
-
+        if not res:
+            raise HTTPException(status_code=401)
         res = cursor.fetchone()
         adresse_mail= res[0]
-        if adresse_mail is None:
-            raise HTTPException(status_code=401)
+        
         token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm)
         return {"access_token": token,
   "token_type": "bearer"}
