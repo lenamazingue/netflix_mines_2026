@@ -55,7 +55,7 @@ async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
         
         cursor.execute(query)
         res = cursor.fetchall()
-        total = len(res)
+        #total = len(res)
         print(res)
         return {"data":res,"page": page,"per_page": per_page,"total": total}
 
