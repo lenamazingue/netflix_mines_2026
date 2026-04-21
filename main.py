@@ -140,7 +140,7 @@ async def connexion(utilisateur: Utilisateur):
         cursor = conn.cursor()
         #on va tester si l'adresse mail existe bien dans la base
 
-        cursor.execute(f"""  SELECT* FROM Utilisateur WHERE AdreseMail='{utilisateur.email}' AND MotDePasse= '{utilisateur.password}' """) 
+        cursor.execute(f"""  SELECT* FROM Utilisateur WHERE AdresseMail='{utilisateur.email}' AND MotDePasse= '{utilisateur.password}' """) 
 
         res = cursor.fetchone()
         adresse_mail= res[0]
