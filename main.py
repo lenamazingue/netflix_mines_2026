@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from db import get_connection
 import jwt
@@ -16,7 +16,7 @@ class Film(BaseModel):
     dateSortie: int
     image: str | None = None
     video: str | None = None
-    genre_Id: int | None = None
+    genreId: int | None = None
 
 class Genre(BaseModel):
     id : int | None = None
@@ -27,33 +27,26 @@ async def createFilm(film : Film):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""
-            INSERT INTO Film (Nom,Note,DateSortie,Image,Video,Genre_ID)  
-            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}','{film.genreID}') RETURNING *
+            INSERT INTO Film (Nom,Note,DateSortie,Image,Video)  
+            VALUES('{film.nom}',{film.note},{film.dateSortie},'{film.image}','{film.video}') RETURNING *
             """)
         res = cursor.fetchone()
         print(res)
         return res
 
 @app.get("/films")
-async def get_films(genre_ID = None, page: int = 1, per_page: int = 20):
+async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
     per_page=int(per_page)
     page=int(page)
     with get_connection() as conn:
         cursor = conn.cursor()
-        if genre_ID == None:
-            cursor.execute(f"SELECT * FROM Film")
-        else:
-            cursor.execute(f"SELECT * FROM Film WHERE Genre_ID = {genre_ID}")
-        ALL = cursor.fetchall()
-        total = len(ALL)
-
-        cursor = conn.cursor()
         offset = per_page * (page - 1)
-        if genre_ID == None : 
+        if genreID == None : 
             cursor.execute(f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}""")
         else : 
-            cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genre_ID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
+            cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
         data = cursor.fetchall()
+        total = len(data)
         res = {"data":data,"page": page,"per_page": per_page,"total": total}
         return res
 
@@ -90,7 +83,20 @@ async def get_genres():
         print(res)
         return res
 
-
+#@app.get("/films")
+#async def get_film_by_genre(genreID : int = None ):
+#    with get_connection() as conn:
+#        cursor = conn.cursor()
+#        query = f"""SELECT *
+#                       FROM Film 
+#                       WHERE Film.Genre_ID = {genreID}"""
+#        if genreID == None:
+#            query= f"""SELECT *
+#                       FROM Film"""
+#        cursor.execute(query)
+#        res = cursor.fetchmany()
+#        print(res)
+#        return res
 
 class Utilisateur(BaseModel):
     id : int | None = None
@@ -139,6 +145,30 @@ async def connexion(utilisateur: Utilisateur):
         token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm)
         return {"access_token": token,
   "token_type": "bearer"}
+
+
+
+
+
+
+
+class Genre_Utilisateur(BaseModel):
+    id : int | None = None
+    id_genre : int | None = None 
+    id_user : int | None = None 
+
+@app.post("/preferences")
+async def create_preferences(utilisateur:Utilisateur,authorization: Annotated[str | None, Header()] = None):
+
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Token manquant")
+
+    token = authorization.replace("Bearer ", "")
+
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT ID_Genre FROM Genre_Utilisateur""")
+        
 
 
 
