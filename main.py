@@ -180,7 +180,11 @@ async def create_preferences(authorization: Annotated[str | None, Header()] = No
     }
         
 
-
+@app.remove("\preferences")
+async def remove_preferences(authorization: Annotated[str | None, Header()] = None):
+    if not authorization:
+        raise HTTPException(status_code=422)
+    
 
 if __name__ == "__main__":
     import uvicorn
