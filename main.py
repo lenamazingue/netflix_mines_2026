@@ -180,10 +180,12 @@ async def create_preferences(authorization:str= Header(None)):
     }
         
 
-@app.delete("\preferences")
+@app.delete("\preferences",status_code=200)
 async def remove_preferences(authorization: Annotated[str | None, Header()] = None, genre_id = None):
     if not authorization:
         raise HTTPException(status_code=404)
+    
+    
     
 
 
