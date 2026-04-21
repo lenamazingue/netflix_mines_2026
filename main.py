@@ -165,7 +165,30 @@ class Genre_Utilisateur(BaseModel):
     id_genre : int | None = None 
     id_user : int | None = None 
 
+@app.post("/preferences")
+async def create_preferences(genreutilisateur:Genre_Utilisateur,authorization: Annotated[str | None, Header()] = None):
 
+    if not authorization:
+        raise HTTPException(status_code=401)
+
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
+        user_id = payload.get("user_id")
+    except:
+        raise HTTPException(status_code=401, detail="Token invalide")
+
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Token invalide")
+    
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT ID_Genre FROM Genre_Utilisateur WHERE ID_User= {user_id}""")
+        genres = cursor.fetchall()
+
+    return {
+        "genre_id": [g[0] for g in genres]
+    }
         
 
 
