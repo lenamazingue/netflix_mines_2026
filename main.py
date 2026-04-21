@@ -45,12 +45,10 @@ async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
             cursor.execute(f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}""")
         else : 
             cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
-        
-        #cursor.execute(query)
-        res = cursor.fetchall()
-        total = len(res)
-        print(res)
-        return {"data":res,"page": page,"per_page": per_page,"total": total}
+        data = cursor.fetchall()
+        total = len(data)
+        res = {"data":data,"page": page,"per_page": per_page,"total": total}
+        return res
 
 
 
