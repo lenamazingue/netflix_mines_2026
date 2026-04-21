@@ -22,7 +22,7 @@ class Genre(BaseModel):
     id : int | None = None
     type : str | None = None 
 
-@app.post("/film")
+@app.post("/films")
 async def createFilm(film : Film):
     with get_connection() as conn:
         cursor = conn.cursor()
