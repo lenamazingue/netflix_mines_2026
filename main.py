@@ -35,7 +35,11 @@ async def createFilm(film : Film):
         return res
 
 @app.get("/films")
+<<<<<<< HEAD
 async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
+=======
+async def get_films(genreID: int =  None, page: int = 1, per_page: int = 20):
+>>>>>>> e4ec8d9277e8307ba81c5a7427f44d6c1c47c9e4
     per_page=int(per_page)
     page=int(page)
     with get_connection() as conn:
@@ -108,9 +112,9 @@ async def get_genres():
 
 class Utilisateur(BaseModel):
     id : int | None = None
-    email : str
+    email : str|None 
     pseudo : str|None
-    password : str
+    password : str|None 
 
 Mot_secret = "2f6c99a0445caff2b6a56bb3224c0359"
 Algorithm = "HS256"
