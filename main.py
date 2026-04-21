@@ -39,15 +39,16 @@ async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
     with get_connection() as conn:
         cursor = conn.cursor()
         offset = per_page * (page - 1)
-        if genreID is not None:
-            counting = f"""SELECT COUNT(*) FROM Film WHERE Genre_ID = {genreID} ORDER BY DateSortie DESC """
-            query=f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset} """ 
-        else:
-            counting = f"""SELECT COUNT(*) FROM Film"""
-            query = f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}"""
-        
-        cursor.execute(counting)
+        if genreID == None :
+            cursor.execute(f"""SELECT COUNT(*) FROM Film""")
+        else : 
+            cursor.execute(f"""SELECT COUNT(*) FROM Film WHERE Genre_ID = {genreID}""")
         total = cursor.fetchone()[0]
+
+        if genreID == None : 
+            query = f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}"""
+        else : 
+            query=f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset} """
         
         cursor.execute(query)
         res = cursor.fetchall()
