@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from db import get_connection
 import jwt
+from typing import Annotated
 app = FastAPI()
 
 
@@ -156,8 +157,27 @@ class Genre_Utilisateur(BaseModel):
 
 @app.post("/preferences")
 async def create_preferences(authorization: Annotated[str | None, Header()] = None):
+    if not authorization:
+        raise HTTPException(status_code=401)
 
-    return {}
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
+        adress_mail = payload.get("ad")
+    except:
+        raise HTTPException(status_code=401, detail="Token invalide")
+
+    if not adress_mail:
+        raise HTTPException(status_code=401, detail="Token invalide")
+    
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""SELECT ID_Genre FROM Genre_Utilisateur G JOIN Utilisateur U ON U.ID=G.ID WHERE U.AdresseMail= '{adress_mail}'""")
+        genres = cursor.fetchall()
+
+    return {
+        "genre_id": [g[0] for g in genres]
+    }
         
 
 
