@@ -155,7 +155,7 @@ class Genre_Utilisateur(BaseModel):
     id_genre : int | None = None 
     id_user : int | None = None 
 
-@app.post("/preferences")
+@app.post("/preferences",status_code=201)
 async def create_preferences(authorization:str= Header(None)):
     if not authorization:
         raise HTTPException(status_code=401)
