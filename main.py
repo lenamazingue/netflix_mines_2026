@@ -35,7 +35,7 @@ async def createFilm(film : Film):
         return res
 
 @app.get("/films")
-async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
+async def get_films(genreID = None, page: int = 1, per_page: int = 20):
     per_page=int(per_page)
     page=int(page)
     with get_connection() as conn:
