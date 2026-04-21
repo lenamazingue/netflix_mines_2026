@@ -66,8 +66,10 @@ async def get_film_by_id(id : int):
         cursor = conn.cursor()
         cursor.execute(f"""SELECT * FROM Film  WHERE Film.id = {id}""" )
         res = cursor.fetchone()
-        print(res)
-        return res
+        if res == None :
+            raise HTTPException(404, "film not found")
+        else :
+            return res
 
 
 @app.post("/genre")
