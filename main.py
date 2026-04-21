@@ -40,9 +40,10 @@ async def get_films(genreID: int = None, page: int = 1, per_page: int = 20):
         cursor = conn.cursor()
         offset = per_page * (page - 1)
         if genreID is not None:
-            cursor.execute(f"SELECT COUNT(*) FROM Film WHERE Genre_ID = {genreID}")
+            counting = (f"SELECT COUNT(*) FROM Film WHERE Genre_ID = {genreID}")
         else:
-            cursor.execute("SELECT COUNT(*) FROM Film")
+            counting = ("SELECT COUNT(*) FROM Film")
+        cursor.execute(counting)
         total = cursor.fetchone()[0]
         if genreID is not None:
             query=(f"""SELECT * FROM Film limit {per_page} WHERE Genre_ID = {genreID} OFFSET {offset} ORDER BY Date""" )
