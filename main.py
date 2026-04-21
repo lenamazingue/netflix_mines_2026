@@ -34,28 +34,51 @@ async def createFilm(film : Film):
         print(res)
         return res
 
-@app.get("/films")
-async def get_films(genreID = None, page: int = 1, per_page: int = 20):
+#@app.get("/films")
+#async def get_films(genreID = None, page: int = 1, per_page: int = 20):
+#    per_page=int(per_page)
+#    page=int(page)
+#    with get_connection() as conn:
+#        cursor = conn.cursor()
+#        if genreID == None:
+#            cursor.execute(f"SELECT * FROM Film")
+#        else:
+#            cursor.execute(f"SELECT * FROM Film WHERE Genre_ID = {genreID}")
+#        ALL = cursor.fetchall()
+#        total = len(ALL)
+
+#        cursor = conn.cursor()
+#        offset = per_page * (page - 1)
+#        if genreID == None : 
+#            cursor.execute(f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}""")
+#        else : 
+#            cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
+#        data = cursor.fetchall()
+#        #total = len(data)
+#        res = {"data":data,"page": page,"per_page": per_page,"total": total}
+#        return res
+
+
+@app.get("/film")
+async def getFilms(page = 1, per_page = 20, genre_id = None):
     per_page=int(per_page)
     page=int(page)
     with get_connection() as conn:
         cursor = conn.cursor()
-        if genreID == None:
+        if genre_id == None:
+            cursor.execute(f"SELECT * FROM Film ORDER BY Genre_ID,DateSortie  LIMIT {per_page} OFFSET {(page-1)*per_page}")
+        else:
+            cursor.execute(f"SELECT * FROM Film WHERE Genre_ID = {genre_id} ORDER BY DateSortie LIMIT {per_page} OFFSET {(page-1)*per_page}")
+        data = cursor.fetchall()
+        cursor = conn.cursor()
+        if genre_id == None:
             cursor.execute(f"SELECT * FROM Film")
         else:
-            cursor.execute(f"SELECT * FROM Film WHERE Genre_ID = {genreID}")
-        ALL = cursor.fetchall()
-        total = len(ALL)
-
-        cursor = conn.cursor()
-        offset = per_page * (page - 1)
-        if genreID == None : 
-            cursor.execute(f"""SELECT * FROM Film ORDER BY DateSortie DESC LIMIT {per_page} OFFSET {offset}""")
-        else : 
-            cursor.execute(f"""SELECT * FROM Film  WHERE Genre_ID = {genreID} ORDER BY Genre_ID,DateSortie DESC LIMIT {per_page} OFFSET {offset} """)
-        data = cursor.fetchall()
-        #total = len(data)
-        res = {"data":data,"page": page,"per_page": per_page,"total": total}
+            cursor.execute(f"SELECT * FROM Film WHERE Genre_ID = {genre_id}")
+        Tout = cursor.fetchall()
+        total = len(Tout)
+        #res = PaginatedResponse(data = data, page = page, per_page = per_page, total = total)
+        res = {"data" : data, "page" : page, "per_page" : per_page, "total" : total}
         return res
 
 
