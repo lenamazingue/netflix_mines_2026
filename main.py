@@ -109,8 +109,8 @@ async def get_genres():
 class Utilisateur(BaseModel):
     id : int | None = None
     email : str
-    pseudo : str|None
-    password : str
+    pseudo : str|None=None
+    password : str|None
 
 Mot_secret = "2f6c99a0445caff2b6a56bb3224c0359"
 Algorithm = "HS256"
