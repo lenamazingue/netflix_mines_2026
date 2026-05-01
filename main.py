@@ -261,9 +261,9 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
                 LIMIT 5
             """)
 
-            res = cursor.fetchall()
+            films = cursor.fetchall()
 
-    return res
+    return films
 
 
 if __name__ == "__main__":
