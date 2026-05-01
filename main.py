@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI, HTTPException, Header, Body
 from pydantic import BaseModel
 from db import get_connection
 import jwt
@@ -156,9 +156,9 @@ class Genre_Utilisateur(BaseModel):
     id_user : int | None = None 
 
 @app.post("/preferences",status_code=201)
-async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
+async def create_preferences(genre_dict: dict=Body(...),authorization:str= Header(None)):
     if not authorization:
-        raise HTTPException(status_code=401)
+        raise HTTPException(status_code=422)
 
     token = authorization.replace("Bearer ", "")
     try:
@@ -168,7 +168,7 @@ async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
         raise HTTPException(status_code=401, detail="Token invalide")
 
     if not adress_mail:
-        raise HTTPException(status_code=422, detail="Token invalide")
+        raise HTTPException(status_code=401, detail="Token invalide")
     
     genre_id = genre_dict["genre_id"]
     with get_connection() as conn:
@@ -177,7 +177,7 @@ async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
         cursor.execute(f"""SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}'""")
         user = cursor.fetchone()
         if not user:
-            raise HTTPException(status_code=422, detail="Utilisateur non trouvé")
+            raise HTTPException(status_code=401, detail="Utilisateur non trouvé")
         user_id = user[0]
 
         cursor.execute(f"""
