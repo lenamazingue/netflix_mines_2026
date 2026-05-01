@@ -120,7 +120,7 @@ async def create_account(utilisateur: Utilisateur):
         VALUES('{utilisateur.email}','{utilisateur.pseudo}','{utilisateur.password}') RETURNING *
             """)
         res = cursor.fetchone()
-        adresse_mail= res[0]
+        adresse_mail= res[1]
         token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm)
         
         return {"access_token": token,
@@ -138,7 +138,7 @@ async def connexion(utilisateur: Utilisateur):
         res = cursor.fetchone()        
         if not res:
             raise HTTPException(status_code=401)
-        adresse_mail= res[0]
+        adresse_mail= res[1]
         
         token = jwt.encode({"ad":adresse_mail}, Mot_secret, algorithm = Algorithm)
         return {"access_token": token,
@@ -214,7 +214,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
         cursor.execute(f"""DELETE FROM Genre_Utilisateur WHERE ID_Genre={genre_id} AND ID_User= (SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}')  """)
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Préférence non trouvée")
-    conn.commit()
+        conn.commit()
     return {"status": "success"}
     
     
