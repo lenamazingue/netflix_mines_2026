@@ -253,9 +253,10 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
         else :
             if len(preferences) == 1 :
                 preference = preferences[0]
+                cursor.execute(f"SELECT * FROM Film WHERE ID_Genre = {preference} ORDER BY DateSortie DESC LIMIT 5")
             else : 
                 preference = tuple(p[0] for p in preferences)
-            cursor.execute(f"SELECT * FROM Film WHERE ID_Genre IN {preference} ORDER BY DateSortie DESC LIMIT 5")
+                cursor.execute(f"SELECT * FROM Film WHERE ID_Genre IN {preference} ORDER BY DateSortie DESC LIMIT 5")
             res = cursor.fetchall()
             return res
 
