@@ -265,7 +265,6 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
 
     return films
 
-
 if __name__ == "__main__":
     import uvicorn
 
