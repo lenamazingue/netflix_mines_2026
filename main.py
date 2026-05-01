@@ -170,14 +170,14 @@ async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
     if not adress_mail:
         raise HTTPException(status_code=401, detail="Token invalide")
     
-    genre_id = genre_dict("genre_id")
+    genre_id = genre_dict["genre_id"]
     with get_connection() as conn:
         cursor = conn.cursor()
 
         cursor.execute(f"SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}'")
         user = cursor.fetchone()
         if not user:
-            raise HTTPException(status_code=401, detail="Utilisateur non trouvé")
+            raise HTTPException(status_code=422, detail="Utilisateur non trouvé")
         user_id = user[0]
 
         cursor.execute(f"""
@@ -190,6 +190,7 @@ async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
             INSERT INTO Genre_Utilisateur (ID_Utilisateur, ID_Genre) 
             VALUES ({user_id}, {genre_id})
         """)
+        conn.commit()
 
     return {"genre_id": genre_id
         
