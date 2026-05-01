@@ -168,13 +168,13 @@ async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
         raise HTTPException(status_code=401, detail="Token invalide")
 
     if not adress_mail:
-        raise HTTPException(status_code=401, detail="Token invalide")
+        raise HTTPException(status_code=422, detail="Token invalide")
     
     genre_id = genre_dict["genre_id"]
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        cursor.execute(f"SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}'")
+        cursor.execute(f"""SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}'""")
         user = cursor.fetchone()
         if not user:
             raise HTTPException(status_code=422, detail="Utilisateur non trouvé")
@@ -182,12 +182,12 @@ async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
 
         cursor.execute(f"""
             SELECT ID FROM Genre_Utilisateur 
-            WHERE ID_Utilisateur = {user_id} AND ID_Genre = {genre_id}
+            WHERE ID_User = {user_id} AND ID_Genre = {genre_id}
         """)
         if cursor.fetchone():
             raise HTTPException(status_code=409, detail="genre déjà dans favoris")
         cursor.execute(f"""
-            INSERT INTO Genre_Utilisateur (ID_Utilisateur, ID_Genre) 
+            INSERT INTO Genre_Utilisateur (ID_User, ID_Genre) 
             VALUES ({user_id}, {genre_id})
         """)
         conn.commit()
