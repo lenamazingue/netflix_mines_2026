@@ -156,7 +156,7 @@ class Genre_Utilisateur(BaseModel):
     id_user : int | None = None 
 
 @app.post("/preferences",status_code=201)
-async def create_preferences(authorization:str= Header(None)):
+async def create_preferences(genre_dict: dict,authorization:str= Header(None)):
     if not authorization:
         raise HTTPException(status_code=401)
 
@@ -170,16 +170,29 @@ async def create_preferences(authorization:str= Header(None)):
     if not adress_mail:
         raise HTTPException(status_code=401, detail="Token invalide")
     
+    genre_id = genre_dict("genre_id")
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        cursor.execute(f"""SELECT ID_Genre FROM Genre_Utilisateur G JOIN Utilisateur U ON U.ID=G.ID WHERE U.AdresseMail= '{adress_mail}'""")
-        genres = cursor.fetchall()
-        if genres is not None:
-            raise HTTPException(status_code=409)
+        cursor.execute(f"SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}'")
+        user = cursor.fetchone()
+        if not user:
+            raise HTTPException(status_code=401, detail="Utilisateur non trouvé")
+        user_id = user[0]
 
-    return {
-        "genre_id": [g[0] for g in genres]
+        cursor.execute(f"""
+            SELECT ID FROM Genre_Utilisateur 
+            WHERE ID_Utilisateur = {user_id} AND ID_Genre = {genre_id}
+        """)
+        if cursor.fetchone():
+            raise HTTPException(status_code=409, detail="genre déjà dans favoris")
+        cursor.execute(f"""
+            INSERT INTO Genre_Utilisateur (ID_Utilisateur, ID_Genre) 
+            VALUES ({user_id}, {genre_id})
+        """)
+
+    return {"genre_id": genre_id
+        
     }
         
 
