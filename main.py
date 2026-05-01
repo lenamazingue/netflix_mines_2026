@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Header, Body
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from db import get_connection
 import jwt
@@ -156,7 +156,8 @@ class Genre_Utilisateur(BaseModel):
     id_user : int | None = None 
 
 @app.post("/preferences",status_code=201)
-async def create_preferences(genre_dict: dict=Body(...),authorization:str= Header(None)):
+
+async def create_preferences(genre:Genre_Utilisateur,authorization:str= Header(None)):
     if not authorization:
         raise HTTPException(status_code=422)
 
@@ -170,7 +171,8 @@ async def create_preferences(genre_dict: dict=Body(...),authorization:str= Heade
     if not adress_mail:
         raise HTTPException(status_code=401, detail="Token invalide")
     
-    genre_id = genre_dict["genre_id"]
+    genre_id = genre.id_genre
+
     with get_connection() as conn:
         cursor = conn.cursor()
 
@@ -204,7 +206,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
     token = authorization.replace("Bearer ", "")
     try:
         payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
-        adress_mail = payload.get("ad")
+        adress_mail = payload.get("ad") 
     except:
         raise HTTPException(status_code=401, detail="Token invalide")
     with get_connection() as conn:
@@ -212,7 +214,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
         cursor.execute(f"""DELETE FROM Genre_Utilisateur WHERE ID_Genre={genre_id} AND ID_User= (SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}')  """)
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Préférence non trouvée")
-            
+    conn.commit()
     return {"status": "success"}
     
     
