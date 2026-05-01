@@ -256,7 +256,7 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
         cursor.execute(f"""
             SELECT *
             FROM Film
-            WHERE ID_Genre = {tuple(ids)}
+            WHERE Genre_ID = {tuple(ids)}
             ORDER BY DateSortie DESC
             LIMIT 5
         """)
