@@ -262,7 +262,7 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
         """)
 
         res = cursor.fetchall()
-    return res
+        return res
 
 
 if __name__ == "__main__":
