@@ -164,7 +164,7 @@ async def create_preferences(genre:Genre_Utilisateur,authorization:str= Header(N
     token = authorization.replace("Bearer ", "")
     try:
         payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
-        adress_mail = payload.get("ad") or payload.get("sub")
+        adress_mail = payload.get("ad") 
     except:
         raise HTTPException(status_code=401, detail="Token invalide")
 
@@ -206,7 +206,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
     token = authorization.replace("Bearer ", "")
     try:
         payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
-        adress_mail = payload.get("ad") or payload.get("sub")
+        adress_mail = payload.get("ad")
     except:
         raise HTTPException(status_code=401, detail="Token invalide")
     with get_connection() as conn:
