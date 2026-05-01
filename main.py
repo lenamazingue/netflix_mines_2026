@@ -201,6 +201,9 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
             
     return {"status": "success"}
     
+    
+    
+
 
 if __name__ == "__main__":
     import uvicorn
