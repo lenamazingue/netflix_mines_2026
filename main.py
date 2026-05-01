@@ -195,7 +195,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
         raise HTTPException(status_code=401, detail="Token invalide")
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"""DELETE FROM Genre_Utilisateur WHERE ID_Genre={genre_id} AND ID_Utilisateur= (SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}')  """)
+        cursor.execute(f"""DELETE FROM Genre_Utilisateur WHERE ID_Genre={genre_id} AND ID_User= (SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}')  """)
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Préférence non trouvée")
             
