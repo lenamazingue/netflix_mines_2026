@@ -238,7 +238,7 @@ async def get_recommendations(preferences : int , authorization : Annotated[str 
     token = authorization.replace("Bearer ", "")
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM Film JOIN Genre_Utilisateur ON Film.ID = Genre_Utilisateur.ID_user WHERE ID_Genre = {preferences} LIMIT {5}")
+        cursor.execute(f"SELECT Nom FROM Film JOIN Genre_Utilisateur ON Film.ID = Genre_Utilisateur.ID_user WHERE ID_Genre = {preferences} LIMIT {5}")
         res = cursor.fetchall()
         return res
 
