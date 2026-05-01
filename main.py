@@ -209,6 +209,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
         adress_mail = payload.get("ad")
     except:
         raise HTTPException(status_code=401, detail="Token invalide")
+    
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""DELETE FROM Genre_Utilisateur WHERE ID_Genre={genre_id} AND ID_User= (SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}')  """)
@@ -227,10 +228,29 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
 async def get_recommendations(preferences : int, authorization : Annotated[str | None, Header()] = None):
     if not authorization:
         raise HTTPException(status_code = 422)
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
+        adress_mail = payload.get("ad") 
+    except:
+        raise HTTPException(status_code=401, detail="Token invalide")
+
+    if not adress_mail:
+        raise HTTPException(status_code=401, detail="Token invalide")
+    
     with get_connection() as conn:
         cursor = conn.cursor()
-        #preferences = cursor.execute(f"SELECT * FROM Genre_Utilisateur WHERE ")
-        cursor.execute(f"SELECT * FROM Film WHERE ID_Genre = {preferences} LIMIT 5")
+
+        cursor.execute(f"""SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}'""")
+        user = cursor.fetchone()
+        if not user:
+            raise HTTPException(status_code=401, detail="Utilisateur non trouvé")
+        user_id = user[0]
+
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        preferences = cursor.execute(f"SELECT * FROM Genre_Utilisateur WHERE ID_User = {user_id}")
+        cursor.execute(f"SELECT * FROM Film WHERE ID_Genre = {preferences} ORDER BY DateSortie DESC LIMIT 5")
         res = cursor.fetchall()
         return res
 
