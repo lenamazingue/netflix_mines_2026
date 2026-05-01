@@ -251,7 +251,7 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
         if not preferences:
             return []
         else :
-            if len(preferences = 1):
+            if len(preferences) == 1 :
                 preference = preferences[0]
             else : 
                 preference = tuple(p[0] for p in preferences)
