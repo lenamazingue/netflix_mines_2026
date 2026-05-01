@@ -172,18 +172,34 @@ async def create_preferences(authorization:str= Header(None)):
     
     with get_connection() as conn:
         cursor = conn.cursor()
+
         cursor.execute(f"""SELECT ID_Genre FROM Genre_Utilisateur G JOIN Utilisateur U ON U.ID=G.ID WHERE U.AdresseMail= '{adress_mail}'""")
         genres = cursor.fetchall()
+        if genres is not None:
+            raise HTTPException(status_code=409)
 
     return {
         "genre_id": [g[0] for g in genres]
     }
         
 
-@app.delete("\preferences")
-async def remove_preferences(authorization: Annotated[str | None, Header()] = None):
-    if not authorization:
+@app.delete("/preferences/{genre_id}")
+async def remove_preferences(genre_id:int,authorization: Annotated[str | None, Header()] = None):
+    if not authorization: #même structure que précédemment
         raise HTTPException(status_code=422)
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
+        adress_mail = payload.get("ad")
+    except:
+        raise HTTPException(status_code=401, detail="Token invalide")
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""DELETE FROM Genre_Utilisateur WHERE ID_Genre={genre_id} AND ID_Utilisateur= (SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}')  """)
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Préférence non trouvée")
+            
+    return {"status": "success"}
     
 
 if __name__ == "__main__":
