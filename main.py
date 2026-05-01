@@ -225,7 +225,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
 #
 
 @app.get("/preferences/recommendations")
-async def get_recommendations(preferences : int, authorization : Annotated[str | None, Header()] = None):
+async def get_recommendations(authorization : Annotated[str | None, Header()] = None):
     if not authorization:
         raise HTTPException(status_code = 422)
     token = authorization.replace("Bearer ", "")
