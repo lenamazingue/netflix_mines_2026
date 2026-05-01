@@ -220,14 +220,6 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
     
     
 
-#@app.get("/genres")
-#async def get_genres():
-#    with get_connection() as conn:
-#        cursor = conn.cursor()
- #       cursor.execute(f"""SELECT * FROM Genre""" )
- #       res = cursor.fetchall()
- #       print(res)
- #       return res
 
 
 
@@ -235,7 +227,6 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
 async def get_recommendations(preferences : int , authorization : Annotated[str | None, Header()] = None):
     if not authorization:
         raise HTTPException(status_code = 422)
-    token = authorization.replace("Bearer ", "")
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM Film WHERE ID_Genre = {preferences} LIMIT {5}")
