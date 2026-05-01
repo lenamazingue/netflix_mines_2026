@@ -240,16 +240,14 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
     
     with get_connection() as conn:
         cursor = conn.cursor()
-
         cursor.execute(f"""SELECT ID FROM Utilisateur WHERE AdresseMail = '{adress_mail}'""")
         user = cursor.fetchone()
         if not user:
             raise HTTPException(status_code=401, detail="Utilisateur non trouvé")
         user_id = user[0]
 
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        preferences = cursor.execute(f"SELECT * FROM Genre_Utilisateur WHERE ID_User = {user_id}")
+        preference = cursor.execute(f"SELECT * FROM Genre_Utilisateur WHERE ID_User = {user_id}")
+        preferences = preference[0]
         cursor.execute(f"SELECT * FROM Film WHERE ID_Genre = {preferences} ORDER BY DateSortie DESC LIMIT 5")
         res = cursor.fetchall()
         return res
