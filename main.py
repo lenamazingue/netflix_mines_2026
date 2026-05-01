@@ -152,7 +152,7 @@ async def connexion(utilisateur: Utilisateur):
 
 class Genre_Utilisateur(BaseModel):
     id : int | None = None
-    id_genre : int  
+    genre_id : int  
     id_user : int | None = None 
 
 @app.post("/preferences",status_code=201)
@@ -164,14 +164,14 @@ async def create_preferences(genre:Genre_Utilisateur,authorization:str= Header(N
     token = authorization.replace("Bearer ", "")
     try:
         payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
-        adress_mail = payload.get("ad") 
+        adress_mail = payload.get("ad") or payload.get("sub")
     except:
         raise HTTPException(status_code=401, detail="Token invalide")
 
     if not adress_mail:
         raise HTTPException(status_code=401, detail="Token invalide")
     
-    genre_id = genre.id_genre
+    genre_id = genre.genre_id
 
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -206,7 +206,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
     token = authorization.replace("Bearer ", "")
     try:
         payload = jwt.decode(token, Mot_secret, algorithms=[Algorithm])
-        adress_mail = payload.get("ad")
+        adress_mail = payload.get("ad") or payload.get("sub")
     except:
         raise HTTPException(status_code=401, detail="Token invalide")
     with get_connection() as conn:
@@ -231,7 +231,7 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
 
 
 
-@app.get("/preferences/recommendations")
+@app.get("/recommendations")
 async def get_recommendations(preferences : int , authorization : Annotated[str | None, Header()] = None):
     if not authorization:
         raise HTTPException(status_code = 422)
