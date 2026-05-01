@@ -248,11 +248,11 @@ async def get_recommendations(authorization : Annotated[str | None, Header()] = 
 
         cursor.execute(f"SELECT ID_Genre FROM Genre_Utilisateur WHERE ID_User = {user_id}")
         preferences = cursor.fetchall()
-        ids = [p[0] for p in preferences if p[0] is not None]
+        pref = [p[0] for p in preferences if p[0] is not None]
 
         films = []
 
-        for genre_id in ids:
+        for genre_id in pref:
             cursor.execute(f"""
                 SELECT *
                 FROM Film
