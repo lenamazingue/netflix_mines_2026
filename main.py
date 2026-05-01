@@ -229,6 +229,10 @@ async def remove_preferences(genre_id:int,authorization: Annotated[str | None, H
  #       print(res)
  #       return res
 
+@app.get("/recommendations")
+async def get_recommendations_no_preferences():
+    res = {}
+    return res
 
 @app.get("/recommendations")
 async def get_recommendations(preferences : int , authorization : Annotated[str | None, Header()] = None):
